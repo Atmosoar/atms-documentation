@@ -1,0 +1,340 @@
+openapi: 3.0.0
+info:
+  title: Weather Forecast API
+  description: API to get weather forecast data.
+  version: 1.0.0
+servers:
+  - url: https://weather-data.atmosoar.io/api/forecast
+    description: Production server
+  - url: https://weather-data-test.atmosoar.io/api/forecast/
+    description: Test server
+paths:
+  /get-point-forecast:
+    get:
+      summary: Get point forecast
+      description: Retrieve weather forecast data for a specific location and datetime.
+      parameters:
+        - name: datetime
+          in: query
+          required: true
+          description: Datetime for the forecast in ISO 8601 format
+          schema:
+            type: string
+            format: date-time
+        - name: latitude
+          in: query
+          required: true
+          description: Latitude of the point
+          schema:
+            type: number
+            format: float
+        - name: longitude
+          in: query
+          required: true
+          description: Longitude of the point
+          schema:
+            type: number
+            format: float
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PointForecastResponse'
+        '400':
+          description: Bad Request - Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not Found - Data Not Available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /get-path-forecast:
+    post:
+      summary: Get path forecast
+      description: Retrieve weather forecast data for a specific series of waypoints with datetime.
+      requestBody:
+        description: Request body containing an array of waypoints with datetime.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/WaypointWithDatetime'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PathForecastResponse'
+        '400':
+          description: Bad Request - Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not Found - Data Not Available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /get-area-forecast:
+    get:
+      summary: Get area forecast
+      description: Retrieve weather forecast data for a specific area and datetime.
+      parameters:
+        - name: datetime
+          in: query
+          required: true
+          description: Datetime for the forecast in ISO 8601 format
+          schema:
+            type: string
+            format: date-time
+        - name: north
+          in: query
+          required: true
+          description: North latitude of the area
+          schema:
+            type: number
+            format: float
+        - name: south
+          in: query
+          required: true
+          description: South latitude of the area
+          schema:
+            type: number
+            format: float
+        - name: east
+          in: query
+          required: true
+          description: East longitude of the area
+          schema:
+            type: number
+            format: float
+        - name: west
+          in: query
+          required: true
+          description: West longitude of the area
+          schema:
+            type: number
+            format: float
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AreaForecastResponse'
+        '400':
+          description: Bad Request - Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Not Found - Data Not Available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          
+components:
+  schemas:
+    WaypointWithDatetime:
+      type: object
+      properties:
+        lat:
+          type: number
+          format: float
+        lng:
+          type: number
+          format: float
+        datetime:
+          type: string
+          format: date-time
+    PointForecastResponse:
+      type: object
+      properties:
+        forecast:
+          $ref: '#/components/schemas/Forecast'
+    PathForecastResponse:
+      type: object
+      properties:
+        forecasts:
+          type: array
+          items:
+            $ref: '#/components/schemas/ForecastWithDatetime'
+    AreaForecastResponse:
+      type: object
+      properties:
+        forecasts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Forecast'
+    Forecast:
+      type: object
+      properties:
+        lat:
+          type: number
+          format: float
+        lng:
+          type: number
+          format: float
+        surface:
+          $ref: '#/components/schemas/Surface'
+        altitude:
+          $ref: '#/components/schemas/Altitude'
+        atmosphere:
+          $ref: '#/components/schemas/Atmosphere'
+        common:
+          $ref: '#/components/schemas/Common'
+        metadata:
+          $ref: '#/components/schemas/WeatherMetadata'
+    ForecastWithDatetime:
+      type: object
+      properties:
+        lat:
+          type: number
+          format: float
+        lng:
+          type: number
+          format: float
+        datetime:
+          type: string
+          format: date-time
+        surface:
+          $ref: '#/components/schemas/Surface'
+        altitude:
+          $ref: '#/components/schemas/Altitude'
+        atmosphere:
+          $ref: '#/components/schemas/Atmosphere'
+        common:
+          $ref: '#/components/schemas/Common'
+        metadata:
+          $ref: '#/components/schemas/WeatherMetadata'
+    Altitude:
+      type: object
+      additionalProperties:
+        type: object
+        properties:
+          rh:
+            type: number
+            format: float
+          temp:
+            type: number
+            format: float
+          uwind:
+            type: number
+            format: float
+          vwind:
+            type: number
+            format: float
+          winddir:
+            type: number
+            format: float
+          windspd:
+            type: number
+            format: float
+    Atmosphere:
+      type: object
+      properties:
+        cape:
+          type: number
+          format: float
+        cin:
+          type: number
+          format: float
+        lcl:
+          type: number
+          format: float
+        lfc:
+          type: number
+          format: float
+    Common:
+      type: object
+      properties:
+        freezing_level:
+          type: number
+          format: float
+        mslpres:
+          type: number
+          format: float
+    Surface:
+      type: object
+      properties:
+        dewpt:
+          type: number
+          format: float
+        rain:
+          type: number
+          format: float
+        rh:
+          type: number
+          format: float
+        snow:
+          type: number
+          format: float
+        temp:
+          type: number
+          format: float
+        uwind:
+          type: number
+          format: float
+        visk:
+          type: number
+          format: float
+        vwind:
+          type: number
+          format: float
+        winddir:
+          type: number
+          format: float
+        windgust:
+          type: number
+          format: float
+        windspd:
+          type: number
+          format: float
+    WeatherMetadata:
+      type: object
+      properties:
+        weather_area:
+          type: string
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+        traceId:
+          type: string
