@@ -70,9 +70,7 @@ paths:
         content:
           application/json:
             schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/WaypointWithDatetime'
+              $ref: '#/components/schemas/GetPathForecastRequestBody'
       responses:
         '200':
           description: Successful response
@@ -166,6 +164,13 @@ paths:
           
 components:
   schemas:
+    GetPathForecastRequestBody:
+      type: object
+      properties:
+        path:
+          type: array
+          items:
+            $ref: '#/components/schemas/WaypointWithDatetime'
     WaypointWithDatetime:
       type: object
       properties:
