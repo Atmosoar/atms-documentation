@@ -4,7 +4,7 @@ info:
   description: API to get weather forecast data.
   version: 1.0.0
 servers:
-  - url: https://weather-data.atmosoar.io/api/forecast
+  - url: https://weather-data-eu.atmosoar.io/api/forecast
     description: Production server
   - url: https://weather-data-test.atmosoar.io/api/forecast/
     description: Test server
