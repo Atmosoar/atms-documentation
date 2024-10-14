@@ -1,0 +1,78 @@
+openapi: 3.0.0
+info:
+  title: Elevation API
+  description: This API allows the user to retrieve elevation data for a location, given the longitude and the latitude. It also supports querying multiple locations in a single request. The global dataset used is GTOPO30 (~1km resolution). High-resolution digital terrain models are available for Italy, UK, France, and Germany; other countries are available on request.
+  version: 1.0.0
+servers:
+  - url: https://elevation-data-eu.atmosoar.io/api/elevation
+    description: Production Server
+paths:
+  /point:
+    get:
+      summary: Get elevation for the specified coordinate
+      parameters:
+        - name: lat
+          in: query
+          required: true
+          schema:
+            type: number
+            format: float
+          description: Latitude of the point
+        - name: lng
+          in: query
+          required: true
+          schema:
+            type: number
+            format: float
+          description: Longitude of the point
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Bad Request - Invalid parameters
+        '404':
+          description: Not Found - Data Not Available
+        '500':
+          description: Internal Server Error
+
+  /cluster:
+    post:
+      summary: Get elevations for multiple coordinates
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                locations:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      lat:
+                        type: number
+                        format: float
+                      lng:
+                        type: number
+                        format: float
+                    required:
+                      - lat
+                      - lng
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Bad Request - Invalid parameters
+        '404':
+          description: Not Found - Data Not Available
+        '500':
+          description: Internal Server Error
